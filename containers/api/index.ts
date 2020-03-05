@@ -4,7 +4,6 @@ import bodyParser from 'body-parser';
 import { ApolloServer, gql } from 'apollo-server-express';
 import coldStart from './functions/cold-start';
 
-
 const users = [
     {
         id: 1,
@@ -22,7 +21,6 @@ const users = [
         age: 18,
     },
 ];
-
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
@@ -55,10 +53,7 @@ const resolvers = {
 };
 
 const server = new ApolloServer({ typeDefs, resolvers });
-
-
 const app = express();
-
 app.use(cors({ origin: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -68,7 +63,6 @@ const router = express.Router();
 app.use('/', router); // https://api-dnz3lqp74q-an.a.run.app/**
 app.use('/api', router); // https://s.aiii.ai/api/**
 router.get('/', coldStart); // 喚醒
-
 server.applyMiddleware({ app });
 
 const port = process.env.PORT || 8080;
