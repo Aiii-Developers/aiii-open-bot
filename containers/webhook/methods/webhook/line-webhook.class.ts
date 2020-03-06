@@ -24,6 +24,12 @@ export default class LineWebhook {
 
   private eventStack: EventStack[] = [];
 
+  public userId = '';
+
+  public roomId = '';
+
+  public groupId = '';
+
   constructor(lineConfig: LineConfig) {
     this.lineClient = new Client(lineConfig);
   }
@@ -36,10 +42,17 @@ export default class LineWebhook {
 
     console.log('line-webhook headers:', JSON.stringify(req.headers));
     console.log('line-webhook body = ', JSON.stringify(req.body));
-    const { userId } = req.body.events[0].source;
+    this.userId = req.body.events[0].source.userId || '';
+    this.roomId = req.body.events[0].source.roomId || '';
+    this.groupId = req.body.events[0].source.groupId || '';
+    console.log({
+      userId: this.userId,
+      roomId: this.roomId,
+      groupId: this.groupId,
+    });
 
     // line webhook 驗證用
-    if (userId === 'Udeadbeefdeadbeefdeadbeefdeadbeef') {
+    if (this.userId === 'Udeadbeefdeadbeefdeadbeefdeadbeef') {
       res.end();
     }
 
@@ -53,11 +66,11 @@ export default class LineWebhook {
       });
   }
 
-    /**
-   * 設定 text 事件
-   * @param eventName 觸發文字(string 或 正規表達式)
-   * @param callback 自訂的函式
-   */
+  /**
+ * 設定 text 事件
+ * @param eventName 觸發文字(string 或 正規表達式)
+ * @param callback 自訂的函式
+ */
   public setHandleText(eventName: string | RegExp, callback: (event: MessageEvent) => void) {
     this.eventStack.push({
       eventName,

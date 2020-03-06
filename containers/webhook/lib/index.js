@@ -38,6 +38,18 @@ router.get('/', cold_start_1.default); // 喚醒
 let travelWarning;
 let coronavirusCaseNum;
 let lineWebhook;
+const disableMap = {};
+function initTravelWarning() {
+    return __awaiter(this, void 0, void 0, function* () {
+        travelWarning = yield requestPromise.get('https://us-central1-aiii-bot-platform.cloudfunctions.net/travelWarning', {
+            headers: {
+                'cache-control': 'no-cache',
+                'Content-Type': 'application/json',
+            },
+            json: true,
+        });
+    });
+}
 router.all('/webhook', (req, res) => {
     console.log('webhook start');
     if (!lineWebhook) {
@@ -49,26 +61,22 @@ router.all('/webhook', (req, res) => {
     lineWebhook.setHandleText(/^#/, (event) => __awaiter(void 0, void 0, void 0, function* () {
         const message = event.message;
         const { replyToken } = event;
-        if (!travelWarning) {
-            travelWarning = yield requestPromise.get('https://us-central1-aiii-bot-platform.cloudfunctions.net/travelWarning', {
-                headers: {
-                    'cache-control': 'no-cache',
-                    'Content-Type': 'application/json',
-                },
-                json: true,
-            });
-        }
-        console.log('travelWarning=>', travelWarning);
-        const messageHashTag = message.text.replace(/#/, '');
-        if (travelWarning[messageHashTag]) {
-            lineWebhook.replyText(replyToken, [
-                messageHashTag,
-                travelWarning[messageHashTag].instruction || '-',
-                travelWarning[messageHashTag].severity_level || '-',
-            ]);
-        }
-        else {
-            lineWebhook.replyText(replyToken, JSON.stringify(travelWarning));
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            if (!travelWarning) {
+                yield initTravelWarning();
+            }
+            console.log('travelWarning=>', travelWarning);
+            const messageHashTag = message.text.replace(/#/, '');
+            if (travelWarning[messageHashTag]) {
+                lineWebhook.replyText(replyToken, [
+                    messageHashTag,
+                    travelWarning[messageHashTag].instruction || '-',
+                    travelWarning[messageHashTag].severity_level || '-',
+                ]);
+            }
+            else {
+                lineWebhook.replyText(replyToken, JSON.stringify(travelWarning));
+            }
         }
     }));
     lineWebhook.setHandleText(/台灣/, (event) => __awaiter(void 0, void 0, void 0, function* () {
@@ -83,10 +91,142 @@ router.all('/webhook', (req, res) => {
                 json: true,
             });
         }
-        console.log('coronavirusCaseNum=>', coronavirusCaseNum);
-        lineWebhook.replyText(replyToken, `通報：${coronavirusCaseNum['Confirmed cases']}
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            console.log('coronavirusCaseNum=>', coronavirusCaseNum);
+            lineWebhook.replyText(replyToken, `通報：${coronavirusCaseNum['Confirmed cases']}
 死亡：${coronavirusCaseNum.Deaths}`);
+        }
     }));
+    lineWebhook.setHandleText(/中國大陸|中國|大陸|武漢|北京|上海|湖北|湖南|廣州|CHINA|china|China/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        if (!travelWarning) {
+            yield initTravelWarning();
+        }
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            lineWebhook.replyText(replyToken, [
+                '中國大陸',
+                travelWarning['中國大陸'].instruction || '-',
+                travelWarning['中國大陸'].severity_level || '-',
+            ]);
+        }
+    }));
+    lineWebhook.setHandleText(/伊朗|IRAN|iran|Iran/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        if (!travelWarning) {
+            yield initTravelWarning();
+        }
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            lineWebhook.replyText(replyToken, [
+                '伊朗',
+                travelWarning['伊朗'].instruction || '-',
+                travelWarning['伊朗'].severity_level || '-',
+            ]);
+        }
+    }));
+    lineWebhook.setHandleText(/新加坡|星國|獅城|singapore|SINGAPORE|Singapore/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        if (!travelWarning) {
+            yield initTravelWarning();
+        }
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            lineWebhook.replyText(replyToken, [
+                '新加坡',
+                travelWarning['新加坡'].instruction || '-',
+                travelWarning['新加坡'].severity_level || '-',
+            ]);
+        }
+    }));
+    lineWebhook.setHandleText(/日本|japan|Japan|JAPAN/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        if (!travelWarning) {
+            yield initTravelWarning();
+        }
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            lineWebhook.replyText(replyToken, [
+                '日本',
+                travelWarning['日本'].instruction || '-',
+                travelWarning['日本'].severity_level || '-',
+            ]);
+        }
+    }));
+    lineWebhook.setHandleText(/泰國|thailand|THAILAND|Thailand/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        if (!travelWarning) {
+            yield initTravelWarning();
+        }
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            lineWebhook.replyText(replyToken, [
+                '泰國',
+                travelWarning['泰國'].instruction || '-',
+                travelWarning['泰國'].severity_level || '-',
+            ]);
+        }
+    }));
+    lineWebhook.setHandleText(/義大利|italy|ITALY|Italy/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        if (!travelWarning) {
+            yield initTravelWarning();
+        }
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            lineWebhook.replyText(replyToken, [
+                '義大利',
+                travelWarning['義大利'].instruction || '-',
+                travelWarning['義大利'].severity_level || '-',
+            ]);
+        }
+    }));
+    lineWebhook.setHandleText(/韓國|korea|KOREA|Korea|歐巴/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        if (!travelWarning) {
+            yield initTravelWarning();
+        }
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            lineWebhook.replyText(replyToken, [
+                '韓國',
+                travelWarning['韓國'].instruction || '-',
+                travelWarning['韓國'].severity_level || '-',
+            ]);
+        }
+    }));
+    lineWebhook.setHandleText(/澳門特別行政區|澳門|macao|MACAO|Macao/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        if (!travelWarning) {
+            yield initTravelWarning();
+        }
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            lineWebhook.replyText(replyToken, [
+                '澳門特別行政區',
+                travelWarning['澳門特別行政區'].instruction || '-',
+                travelWarning['澳門特別行政區'].severity_level || '-',
+            ]);
+        }
+    }));
+    lineWebhook.setHandleText(/香港特別行政區|香港|hong kong|HANG KONH|Hong Kong|HongKong|HK/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        if (!travelWarning) {
+            yield initTravelWarning();
+        }
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            lineWebhook.replyText(replyToken, [
+                '香港特別行政區',
+                travelWarning['香港特別行政區'].instruction || '-',
+                travelWarning['香港特別行政區'].severity_level || '-',
+            ]);
+        }
+    }));
+    lineWebhook.setHandleText(/閉嘴|吵死了/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] = false;
+            lineWebhook.replyText(replyToken, ['好的，噓~~~', '需要我時請說', 'oober疫大神歸位!!']);
+        }
+    }));
+    lineWebhook.setHandleText(/oober疫大神/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] = true;
+        lineWebhook.replyText(replyToken, '我離開了，我又回來了，咬我啊笨蛋');
+    }));
+    lineWebhook.setHandleText(/.*/, (event) => __awaiter(void 0, void 0, void 0, function* () { }));
     lineWebhook.lineWebhook(req, res);
 });
 const port = process.env.PORT || 8080;

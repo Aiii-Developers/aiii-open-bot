@@ -17,6 +17,9 @@ const lodash_1 = __importDefault(require("lodash"));
 class LineWebhook {
     constructor(lineConfig) {
         this.eventStack = [];
+        this.userId = '';
+        this.roomId = '';
+        this.groupId = '';
         this.handleEvent = (event) => __awaiter(this, void 0, void 0, function* () {
             console.log('event:', JSON.stringify(event));
             switch (event.type) {
@@ -106,9 +109,16 @@ class LineWebhook {
             }
             console.log('line-webhook headers:', JSON.stringify(req.headers));
             console.log('line-webhook body = ', JSON.stringify(req.body));
-            const { userId } = req.body.events[0].source;
+            this.userId = req.body.events[0].source.userId || '';
+            this.roomId = req.body.events[0].source.roomId || '';
+            this.groupId = req.body.events[0].source.groupId || '';
+            console.log({
+                userId: this.userId,
+                roomId: this.roomId,
+                groupId: this.groupId,
+            });
             // line webhook 驗證用
-            if (userId === 'Udeadbeefdeadbeefdeadbeefdeadbeef') {
+            if (this.userId === 'Udeadbeefdeadbeefdeadbeefdeadbeef') {
                 res.end();
             }
             return Promise.all(lodash_1.default.map(req.body.events, this.handleEvent))
