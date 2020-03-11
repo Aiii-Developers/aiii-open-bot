@@ -52,6 +52,17 @@ function initTravelWarning() {
         });
     });
 }
+function initCoronavirusCaseNum() {
+    return __awaiter(this, void 0, void 0, function* () {
+        coronavirusCaseNum = yield requestPromise.get('https://us-central1-aiii-bot-platform.cloudfunctions.net/coronavirusCaseNum', {
+            headers: {
+                'cache-control': 'no-cache',
+                'Content-Type': 'application/json',
+            },
+            json: true,
+        });
+    });
+}
 router.all('/webhook', (req, res) => {
     console.log('webhook start');
     if (!lineWebhook) {
@@ -64,18 +75,32 @@ router.all('/webhook', (req, res) => {
         // const message = event.message as TextEventMessage;
         const { replyToken } = event;
         if (!coronavirusCaseNum) {
-            coronavirusCaseNum = yield requestPromise.get('https://us-central1-aiii-bot-platform.cloudfunctions.net/coronavirusCaseNum', {
-                headers: {
-                    'cache-control': 'no-cache',
-                    'Content-Type': 'application/json',
-                },
-                json: true,
-            });
+            yield initCoronavirusCaseNum();
         }
         if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
             console.log('coronavirusCaseNum=>', coronavirusCaseNum);
             lineWebhook.replyText(replyToken, `通報：${coronavirusCaseNum['Confirmed cases']}
 死亡：${coronavirusCaseNum.Deaths}`);
+        }
+    }));
+    lineWebhook.setHandleText(/^#/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        const message = event.message;
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            if (!coronavirusCaseNum) {
+                yield initCoronavirusCaseNum();
+            }
+            const key = message.text.replace(/#/, '').toLocaleLowerCase();
+            if (!!key && coronavirusCaseNum[key]) {
+                lineWebhook.replyText(replyToken, [`${key}
+通報：${coronavirusCaseNum[key]['Confirmed cases']}
+死亡：${coronavirusCaseNum[key].Deaths}`]);
+            }
+            else {
+                lineWebhook.replyText(replyToken, `台灣
+通報：${coronavirusCaseNum.taiwan['Confirmed cases']}
+死亡：${coronavirusCaseNum.taiwan.Deaths}`);
+            }
         }
     }));
     lineWebhook.setHandleText(/閉嘴|吵死了/, (event) => __awaiter(void 0, void 0, void 0, function* () {
@@ -97,17 +122,28 @@ router.all('/webhook', (req, res) => {
             yield initTravelWarning();
         }
         if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            const payloadMessage = [];
             let isComplete = false;
             lodash_1.default.forEach(keywordMap_1.keyboardMap, (regExp, key) => {
                 if (!isComplete && regExp.test(message.text)) {
                     isComplete = true;
-                    lineWebhook.replyText(replyToken, [
-                        key,
-                        travelWarning[key].instruction || '-',
-                        travelWarning[key].severity_level || '-',
-                    ]);
+                    payloadMessage.push(key);
+                    payloadMessage.push(travelWarning[key].instruction || '-');
+                    payloadMessage.push(travelWarning[key].severity_level || '-');
                 }
             });
+            if (!isComplete && travelWarning[message.text]) {
+                isComplete = true;
+                payloadMessage.push(message.text);
+                payloadMessage.push(travelWarning[message.text].instruction || '-');
+                payloadMessage.push(travelWarning[message.text].severity_level || '-');
+            }
+            if (isComplete) {
+                lineWebhook.replyText(replyToken, payloadMessage);
+            }
+            else {
+                lineWebhook.replyText(replyToken, 'Hi~');
+            }
         }
     }));
     lineWebhook.lineWebhook(req, res);

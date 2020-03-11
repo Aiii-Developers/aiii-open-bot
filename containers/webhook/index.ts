@@ -40,6 +40,17 @@ async function initTravelWarning() {
     });
 }
 
+async function initCoronavirusCaseNum() {
+    coronavirusCaseNum = await requestPromise.get('https://us-central1-aiii-bot-platform.cloudfunctions.net/coronavirusCaseNum', {
+        headers:
+        {
+            'cache-control': 'no-cache',
+            'Content-Type': 'application/json',
+        },
+        json: true,
+    });
+}
+
 router.all('/webhook', (req: express.Request, res: express.Response) => {
     console.log('webhook start');
     if (!lineWebhook) {
@@ -53,14 +64,7 @@ router.all('/webhook', (req: express.Request, res: express.Response) => {
         // const message = event.message as TextEventMessage;
         const { replyToken } = event;
         if (!coronavirusCaseNum) {
-            coronavirusCaseNum = await requestPromise.get('https://us-central1-aiii-bot-platform.cloudfunctions.net/coronavirusCaseNum', {
-                headers:
-                {
-                    'cache-control': 'no-cache',
-                    'Content-Type': 'application/json',
-                },
-                json: true,
-            });
+            await initCoronavirusCaseNum();
         }
         if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
             console.log('coronavirusCaseNum=>', coronavirusCaseNum);
@@ -69,6 +73,27 @@ router.all('/webhook', (req: express.Request, res: express.Response) => {
         }
     });
 
+    lineWebhook.setHandleText(/^#/, async (event) => {
+        const { replyToken } = event;
+        const message = event.message as TextEventMessage;
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            if (!coronavirusCaseNum) {
+                await initCoronavirusCaseNum();
+            }
+
+            const key = message.text.replace(/#/, '').toLocaleLowerCase();
+
+            if (!!key && coronavirusCaseNum[key]) {
+                lineWebhook.replyText(replyToken, [`${key}
+通報：${coronavirusCaseNum[key]['Confirmed cases']}
+死亡：${coronavirusCaseNum[key].Deaths}`]);
+            } else {
+                lineWebhook.replyText(replyToken, `台灣
+通報：${coronavirusCaseNum.taiwan['Confirmed cases']}
+死亡：${coronavirusCaseNum.taiwan.Deaths}`);
+            }
+        }
+    });
 
     lineWebhook.setHandleText(/閉嘴|吵死了/, async (event) => {
         const { replyToken } = event;
@@ -92,17 +117,29 @@ router.all('/webhook', (req: express.Request, res: express.Response) => {
         }
 
         if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            const payloadMessage: any = [];
             let isComplete = false;
             _.forEach(keyboardMap, (regExp, key) => {
                 if (!isComplete && regExp.test(message.text)) {
                     isComplete = true;
-                    lineWebhook.replyText(replyToken, [
-                        key,
-                        travelWarning[key].instruction || '-',
-                        travelWarning[key].severity_level || '-',
-                    ]);
+                    payloadMessage.push(key);
+                    payloadMessage.push(travelWarning[key].instruction || '-');
+                    payloadMessage.push(travelWarning[key].severity_level || '-');
                 }
             });
+
+            if (!isComplete && travelWarning[message.text]) {
+                isComplete = true;
+                payloadMessage.push(message.text);
+                payloadMessage.push(travelWarning[message.text].instruction || '-');
+                payloadMessage.push(travelWarning[message.text].severity_level || '-');
+            }
+
+            if (isComplete) {
+                lineWebhook.replyText(replyToken, payloadMessage);
+            } else {
+                lineWebhook.replyText(replyToken, 'Hi~');
+            }
         }
     });
 
