@@ -165,7 +165,8 @@ export default class LineWebhook {
 
   protected handleSticker = async (event: MessageEvent): Promise<any> => this.replyText(event.replyToken, '收到');
 
-  protected handleFollow = async (event: FollowEvent) => this.replyText(event.replyToken, {
+
+  protected handleFollow = async (event: FollowEvent) => this.lineClient.replyMessage(event.replyToken, {
     type: 'flex',
     altText: 'Flex Message',
     contents: {

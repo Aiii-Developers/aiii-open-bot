@@ -87,7 +87,7 @@ class LineWebhook {
         this.handleLocation = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, '收到'); });
         this.handleSticker = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, '收到'); });
         this.handleFollow = (event) => __awaiter(this, void 0, void 0, function* () {
-            return this.replyText(event.replyToken, {
+            return this.lineClient.replyMessage(event.replyToken, {
                 type: 'flex',
                 altText: 'Flex Message',
                 contents: {
