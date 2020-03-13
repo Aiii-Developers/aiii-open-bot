@@ -27,6 +27,8 @@ const lodash_1 = __importDefault(require("lodash"));
 const cold_start_1 = __importDefault(require("./functions/cold-start"));
 const line_webhook_class_1 = __importDefault(require("./methods/webhook/line-webhook.class"));
 const keywordMap_1 = require("./data/keywordMap");
+const taiwanTodayPayload_1 = require("./template/taiwanTodayPayload");
+const travelWarningPayload_1 = require("./template/travelWarningPayload");
 const app = express_1.default();
 app.use(cors_1.default({ origin: true }));
 app.use(body_parser_1.default.json());
@@ -50,6 +52,7 @@ function initTravelWarning() {
             },
             json: true,
         });
+        console.log('travelWarning=>', travelWarning);
     });
 }
 function initCoronavirusCaseNum() {
@@ -61,6 +64,7 @@ function initCoronavirusCaseNum() {
             },
             json: true,
         });
+        console.log('coronavirusCaseNum=>', coronavirusCaseNum);
     });
 }
 router.all('/webhook', (req, res) => {
@@ -78,9 +82,7 @@ router.all('/webhook', (req, res) => {
             yield initCoronavirusCaseNum();
         }
         if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
-            console.log('coronavirusCaseNum=>', coronavirusCaseNum);
-            lineWebhook.replyText(replyToken, `通報：${coronavirusCaseNum['Confirmed cases']}
-死亡：${coronavirusCaseNum.Deaths}`);
+            lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload_1.taiwanTodayPayload('台灣', coronavirusCaseNum.taiwan['Confirmed cases'], coronavirusCaseNum.taiwan.Deaths));
         }
     }));
     lineWebhook.setHandleText(/^#/, (event) => __awaiter(void 0, void 0, void 0, function* () {
@@ -92,14 +94,10 @@ router.all('/webhook', (req, res) => {
             }
             const key = message.text.replace(/#/, '').toLocaleLowerCase();
             if (!!key && coronavirusCaseNum[key]) {
-                lineWebhook.replyText(replyToken, [`${key}
-通報：${coronavirusCaseNum[key]['Confirmed cases']}
-死亡：${coronavirusCaseNum[key].Deaths}`]);
+                lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload_1.taiwanTodayPayload(key, coronavirusCaseNum[key]['Confirmed cases'], coronavirusCaseNum[key].Deaths));
             }
             else {
-                lineWebhook.replyText(replyToken, `台灣
-通報：${coronavirusCaseNum.taiwan['Confirmed cases']}
-死亡：${coronavirusCaseNum.taiwan.Deaths}`);
+                lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload_1.taiwanTodayPayload('台灣', coronavirusCaseNum.taiwan['Confirmed cases'], coronavirusCaseNum.taiwan.Deaths));
             }
         }
     }));
@@ -127,19 +125,15 @@ router.all('/webhook', (req, res) => {
             lodash_1.default.forEach(keywordMap_1.keyboardMap, (regExp, key) => {
                 if (!isComplete && regExp.test(message.text)) {
                     isComplete = true;
-                    payloadMessage.push(key);
-                    payloadMessage.push(travelWarning[key].instruction || '-');
-                    payloadMessage.push(travelWarning[key].severity_level || '-');
+                    payloadMessage.push(travelWarningPayload_1.travelWarningPayload(key, travelWarning[key].severity_level, travelWarning[key].instruction));
                 }
             });
             if (!isComplete && travelWarning[message.text]) {
                 isComplete = true;
-                payloadMessage.push(message.text);
-                payloadMessage.push(travelWarning[message.text].instruction || '-');
-                payloadMessage.push(travelWarning[message.text].severity_level || '-');
+                payloadMessage.push(travelWarningPayload_1.travelWarningPayload(message.text, travelWarning[message.text].severity_level, travelWarning[message.text].instruction));
             }
             if (isComplete) {
-                lineWebhook.replyText(replyToken, payloadMessage);
+                lineWebhook.lineClient.replyMessage(replyToken, payloadMessage);
             }
             else {
                 lineWebhook.replyText(replyToken, 'Hi~');
