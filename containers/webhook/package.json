@@ -6,7 +6,8 @@
         "start": "./node_modules/.bin/eslint --ext ts . --fix && tsc && node lib/index.js",
         "lint": "./node_modules/.bin/eslint --ext ts . --fix",
         "build": "./node_modules/.bin/eslint --ext ts . --fix && tsc",
-        "deploy": "npm update && ./node_modules/.bin/eslint --ext ts . --fix && tsc && gcloud builds submit --tag gcr.io/aiii-bot-platform/open-bot-line-webhook && gcloud beta run deploy open-bot-line-webhook  --image gcr.io/aiii-bot-platform/open-bot-line-webhook --region asia-east1 --platform managed"
+        "submit": "tsc && gcloud builds submit --tag gcr.io/aiii-open-bot/line-webhook",
+        "deploy": "npm update && ./node_modules/.bin/eslint --ext ts . --fix && tsc && gcloud builds submit --tag gcr.io/aiii-open-bot/line-webhook && gcloud beta run deploy line-webhook  --image gcr.io/aiii-open-bot/line-webhook --region asia-east1 --platform managed"
     },
     "author": "",
     "license": "Apache-2.0",

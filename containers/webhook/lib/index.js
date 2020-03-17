@@ -28,7 +28,9 @@ const cold_start_1 = __importDefault(require("./functions/cold-start"));
 const line_webhook_class_1 = __importDefault(require("./methods/webhook/line-webhook.class"));
 const keywordMap_1 = require("./data/keywordMap");
 const taiwanTodayPayload_1 = require("./template/taiwanTodayPayload");
+const travelWarningInfo_1 = require("./template/travelWarningInfo");
 const travelWarningPayload_1 = require("./template/travelWarningPayload");
+const travelWarningNone_1 = require("./template/travelWarningNone");
 const app = express_1.default();
 app.use(cors_1.default({ origin: true }));
 app.use(body_parser_1.default.json());
@@ -75,7 +77,7 @@ router.all('/webhook', (req, res) => {
             channelSecret: 'b5bcc5e8d50e3ac5c75c2afa4330bdfb',
         });
     }
-    lineWebhook.setHandleText(/台灣|臺灣|taiwan/i, (event) => __awaiter(void 0, void 0, void 0, function* () {
+    lineWebhook.setHandleText(/台灣|臺灣|taiwan|武漢|肺炎|疫情|疾病/i, (event) => __awaiter(void 0, void 0, void 0, function* () {
         // const message = event.message as TextEventMessage;
         const { replyToken } = event;
         if (!coronavirusCaseNum) {
@@ -85,21 +87,9 @@ router.all('/webhook', (req, res) => {
             lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload_1.taiwanTodayPayload('台灣', coronavirusCaseNum.taiwan['Confirmed cases'], coronavirusCaseNum.taiwan.Deaths));
         }
     }));
-    lineWebhook.setHandleText(/^#/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+    lineWebhook.setHandleText(/出國|旅遊|警示等級/, (event) => __awaiter(void 0, void 0, void 0, function* () {
         const { replyToken } = event;
-        const message = event.message;
-        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
-            if (!coronavirusCaseNum) {
-                yield initCoronavirusCaseNum();
-            }
-            const key = message.text.replace(/#/, '').toLocaleLowerCase();
-            if (!!key && coronavirusCaseNum[key]) {
-                lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload_1.taiwanTodayPayload(key, coronavirusCaseNum[key]['Confirmed cases'], coronavirusCaseNum[key].Deaths));
-            }
-            else {
-                lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload_1.taiwanTodayPayload('台灣', coronavirusCaseNum.taiwan['Confirmed cases'], coronavirusCaseNum.taiwan.Deaths));
-            }
-        }
+        lineWebhook.lineClient.replyMessage(replyToken, travelWarningInfo_1.travelWarningInfo);
     }));
     lineWebhook.setHandleText(/閉嘴|吵死了/, (event) => __awaiter(void 0, void 0, void 0, function* () {
         const { replyToken } = event;
@@ -113,30 +103,42 @@ router.all('/webhook', (req, res) => {
         disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] = true;
         lineWebhook.replyText(replyToken, '我離開了，我又回來了，咬我啊笨蛋');
     }));
-    lineWebhook.setHandleText(/.*/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+    lineWebhook.setHandleText(/^#/, (event) => __awaiter(void 0, void 0, void 0, function* () {
         const { replyToken } = event;
         const message = event.message;
+        let text = message.text.replace(/#/, '').toLocaleLowerCase();
         if (!travelWarning) {
             yield initTravelWarning();
         }
         if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
             const payloadMessage = [];
-            let isComplete = false;
             lodash_1.default.forEach(keywordMap_1.keyboardMap, (regExp, key) => {
-                if (!isComplete && regExp.test(message.text)) {
-                    isComplete = true;
-                    payloadMessage.push(travelWarningPayload_1.travelWarningPayload(key, travelWarning[key].severity_level, travelWarning[key].instruction));
+                if (regExp.test(text)) {
+                    text = key;
                 }
             });
-            if (!isComplete && travelWarning[message.text]) {
-                isComplete = true;
-                payloadMessage.push(travelWarningPayload_1.travelWarningPayload(message.text, travelWarning[message.text].severity_level, travelWarning[message.text].instruction));
-            }
-            if (isComplete) {
+            if (travelWarning[text]) {
+                payloadMessage.push(travelWarningPayload_1.travelWarningPayload(text, travelWarning[text].severity_level, travelWarning[text].instruction));
                 lineWebhook.lineClient.replyMessage(replyToken, payloadMessage);
             }
             else {
-                lineWebhook.replyText(replyToken, 'Hi~');
+                lineWebhook.lineClient.replyMessage(replyToken, travelWarningNone_1.travelWarningNone(text));
+            }
+        }
+    }));
+    lineWebhook.setHandleText(/.*/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+        const { replyToken } = event;
+        const message = event.message;
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            if (!coronavirusCaseNum) {
+                yield initCoronavirusCaseNum();
+            }
+            const key = message.text;
+            if (!!key && coronavirusCaseNum[key]) {
+                lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload_1.taiwanTodayPayload(key, coronavirusCaseNum[key]['Confirmed cases'], coronavirusCaseNum[key].Deaths));
+            }
+            else {
+                lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload_1.taiwanTodayPayload('台灣', coronavirusCaseNum.taiwan['Confirmed cases'], coronavirusCaseNum.taiwan.Deaths));
             }
         }
     }));
