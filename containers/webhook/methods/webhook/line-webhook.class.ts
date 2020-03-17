@@ -187,7 +187,7 @@ export default class LineWebhook {
           },
           {
             type: 'text',
-            text: '「武漢」、「肺炎」、「疫情」、「疾病」等字詞',
+            text: '「武漢」、「肺炎」、「疫情」、「疾病」、「新冠肺炎快訊」等字詞',
             margin: 'lg',
             weight: 'bold',
             color: '#FF5D5D',
@@ -201,7 +201,7 @@ export default class LineWebhook {
           },
           {
             type: 'text',
-            text: '「出國」、「旅遊」、「警示等級」等字詞',
+            text: '「出國」、「旅遊」、「警示等級」、「了解各國疫情」等字詞',
             margin: 'lg',
             weight: 'bold',
             color: '#FF5D5D',

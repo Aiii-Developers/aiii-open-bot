@@ -68,7 +68,7 @@ router.all('/webhook', (req: express.Request, res: express.Response) => {
     }
 
 
-    lineWebhook.setHandleText(/台灣|臺灣|taiwan|武漢|肺炎|疫情|疾病/i, async (event) => {
+    lineWebhook.setHandleText(/台灣|臺灣|taiwan|武漢|肺炎|疫情|疾病|新冠肺炎快訊/i, async (event) => {
         // const message = event.message as TextEventMessage;
         const { replyToken } = event;
         if (!coronavirusCaseNum) {
@@ -83,7 +83,7 @@ router.all('/webhook', (req: express.Request, res: express.Response) => {
         }
     });
 
-    lineWebhook.setHandleText(/出國|旅遊|警示等級/, async (event) => {
+    lineWebhook.setHandleText(/出國|旅遊|警示等級|了解各國疫情/, async (event) => {
         const { replyToken } = event;
         lineWebhook.lineClient.replyMessage(replyToken, travelWarningInfo);
     });

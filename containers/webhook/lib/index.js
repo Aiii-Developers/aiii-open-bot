@@ -77,7 +77,7 @@ router.all('/webhook', (req, res) => {
             channelSecret: 'b5bcc5e8d50e3ac5c75c2afa4330bdfb',
         });
     }
-    lineWebhook.setHandleText(/台灣|臺灣|taiwan|武漢|肺炎|疫情|疾病/i, (event) => __awaiter(void 0, void 0, void 0, function* () {
+    lineWebhook.setHandleText(/台灣|臺灣|taiwan|武漢|肺炎|疫情|疾病|新冠肺炎快訊/i, (event) => __awaiter(void 0, void 0, void 0, function* () {
         // const message = event.message as TextEventMessage;
         const { replyToken } = event;
         if (!coronavirusCaseNum) {
@@ -87,7 +87,7 @@ router.all('/webhook', (req, res) => {
             lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload_1.taiwanTodayPayload('台灣', coronavirusCaseNum.taiwan['Confirmed cases'], coronavirusCaseNum.taiwan.Deaths));
         }
     }));
-    lineWebhook.setHandleText(/出國|旅遊|警示等級/, (event) => __awaiter(void 0, void 0, void 0, function* () {
+    lineWebhook.setHandleText(/出國|旅遊|警示等級|了解各國疫情/, (event) => __awaiter(void 0, void 0, void 0, function* () {
         const { replyToken } = event;
         lineWebhook.lineClient.replyMessage(replyToken, travelWarningInfo_1.travelWarningInfo);
     }));
