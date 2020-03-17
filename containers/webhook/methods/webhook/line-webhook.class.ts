@@ -168,7 +168,7 @@ export default class LineWebhook {
 
   protected handleFollow = async (event: FollowEvent) => this.lineClient.replyMessage(event.replyToken, {
     type: 'flex',
-    altText: 'Flex Message',
+    altText: '嗨！我是OOber疫',
     contents: {
       type: 'bubble',
       direction: 'ltr',
