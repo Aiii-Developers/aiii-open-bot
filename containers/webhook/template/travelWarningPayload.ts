@@ -5,7 +5,7 @@ export const travelWarningPayload = (
     instruction: string,
 ): any => ({
     type: 'flex',
-    altText: 'Flex Message',
+    altText: '旅遊警示',
     contents: {
       type: 'bubble',
       hero: {

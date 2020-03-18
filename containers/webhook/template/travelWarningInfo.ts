@@ -2,7 +2,7 @@ import { FlexMessage } from '@line/bot-sdk/dist/types';
 
 export const travelWarningInfo: FlexMessage = {
   type: 'flex',
-  altText: 'Flex Message',
+  altText: '最近是不是要出國玩呢？',
   contents: {
     type: 'bubble',
     direction: 'ltr',

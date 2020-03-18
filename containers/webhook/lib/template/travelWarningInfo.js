@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.travelWarningInfo = {
     type: 'flex',
-    altText: 'Flex Message',
+    altText: '最近是不是要出國玩呢？',
     contents: {
         type: 'bubble',
         direction: 'ltr',

@@ -89,7 +89,7 @@ class LineWebhook {
         this.handleFollow = (event) => __awaiter(this, void 0, void 0, function* () {
             return this.lineClient.replyMessage(event.replyToken, {
                 type: 'flex',
-                altText: 'Flex Message',
+                altText: '嗨！我是OOber疫',
                 contents: {
                     type: 'bubble',
                     direction: 'ltr',

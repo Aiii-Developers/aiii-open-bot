@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.travelWarningPayload = (country, severityLevel, instruction) => ({
     type: 'flex',
-    altText: 'Flex Message',
+    altText: '旅遊警示',
     contents: {
         type: 'bubble',
         hero: {
