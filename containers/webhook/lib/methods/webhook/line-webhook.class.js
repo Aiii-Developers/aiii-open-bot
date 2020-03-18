@@ -108,7 +108,7 @@ class LineWebhook {
                             },
                             {
                                 type: 'text',
-                                text: '「武漢」、「肺炎」、「疫情」、「疾病」、「新冠肺炎快訊」等字詞',
+                                text: '「武漢」、「肺炎」、「疾病」、「新冠肺炎快訊」等字詞',
                                 margin: 'lg',
                                 weight: 'bold',
                                 color: '#FF5D5D',
