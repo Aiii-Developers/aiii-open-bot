@@ -138,7 +138,11 @@ router.all('/webhook', (req, res) => {
                 lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload_1.taiwanTodayPayload(key, coronavirusCaseNum[key]['Confirmed cases'], coronavirusCaseNum[key].Deaths));
             }
             else {
-                lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload_1.taiwanTodayPayload('台灣', coronavirusCaseNum.taiwan['Confirmed cases'], coronavirusCaseNum.taiwan.Deaths));
+                // lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload(
+                //     '台灣',
+                //     coronavirusCaseNum.taiwan['Confirmed cases'],
+                //     coronavirusCaseNum.taiwan.Deaths,
+                // ));
             }
         }
     }));
