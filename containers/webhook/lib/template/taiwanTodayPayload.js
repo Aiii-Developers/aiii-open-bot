@@ -1,14 +1,6 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const moment = __importStar(require("moment-timezone"));
-exports.taiwanTodayPayload = (country, confirmedCases, deaths) => ({
+exports.taiwanTodayPayload = (country, newCases, confirmedCases, deaths, lastUpdated) => ({
     type: 'flex',
     altText: `${country} 疫情消息`,
     contents: {
@@ -47,6 +39,13 @@ exports.taiwanTodayPayload = (country, confirmedCases, deaths) => ({
                 },
                 {
                     type: 'text',
+                    text: `新增案例：${newCases} `,
+                    align: 'start',
+                    weight: 'bold',
+                    color: '#0195BB',
+                },
+                {
+                    type: 'text',
                     text: `確診案例：${confirmedCases} `,
                     align: 'start',
                     weight: 'bold',
@@ -61,7 +60,7 @@ exports.taiwanTodayPayload = (country, confirmedCases, deaths) => ({
                 },
                 {
                     type: 'text',
-                    text: `截至 ${moment.tz('Asia/Taipei').format('YYYY.MM.DD HH:00')}`,
+                    text: `截至 ${lastUpdated}`,
                     align: 'end',
                     color: '#535353',
                 },

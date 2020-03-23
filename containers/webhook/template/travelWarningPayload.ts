@@ -10,7 +10,7 @@ export const travelWarningPayload = (
       type: 'bubble',
       hero: {
         type: 'image',
-        url: 'https://storage.googleapis.com/aiii-bot-platform-tw/open-bot/OOber_%E7%AC%AC%E4%B8%80%E7%B4%9A%E5%88%A5.jpg',
+        url: 'https://storage.googleapis.com/aiii-bot-platform-tw/open-bot/OOber_%E7%AC%AC%E4%B8%89%E7%B4%9A%E5%88%A5.jpg?v=1',
         size: 'full',
         aspectRatio: '3:1',
         aspectMode: 'cover',
@@ -42,7 +42,7 @@ export const travelWarningPayload = (
             size: 'lg',
             align: 'center',
             weight: 'bold',
-            color: '#063293',
+            color: '#FF1515',
           },
           {
             type: 'text',

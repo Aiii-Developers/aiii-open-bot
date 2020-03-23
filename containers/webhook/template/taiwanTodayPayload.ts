@@ -1,10 +1,11 @@
-import * as moment from 'moment-timezone';
 import { FlexMessage } from '@line/bot-sdk/dist/types';
 
 export const taiwanTodayPayload = (
     country: string,
+    newCases: number,
     confirmedCases: number,
     deaths: number,
+    lastUpdated: string,
 ): FlexMessage => ({
     type: 'flex',
     altText: `${country} 疫情消息`,
@@ -44,6 +45,13 @@ export const taiwanTodayPayload = (
                 },
                 {
                     type: 'text',
+                    text: `新增案例：${newCases} `,
+                    align: 'start',
+                    weight: 'bold',
+                    color: '#0195BB',
+                },
+                {
+                    type: 'text',
                     text: `確診案例：${confirmedCases} `,
                     align: 'start',
                     weight: 'bold',
@@ -58,7 +66,7 @@ export const taiwanTodayPayload = (
                 },
                 {
                     type: 'text',
-                    text: `截至 ${moment.tz('Asia/Taipei').format('YYYY.MM.DD HH:00')}`,
+                    text: `截至 ${lastUpdated}`,
                     align: 'end',
                     color: '#535353',
                 },

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bot_sdk_1 = require("@line/bot-sdk");
 const lodash_1 = __importDefault(require("lodash"));
+const welcome_1 = require("../../template/welcome");
 class LineWebhook {
     constructor(lineConfig) {
         this.eventStack = [];
@@ -86,57 +87,11 @@ class LineWebhook {
         this.handleFile = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, '收到'); });
         this.handleLocation = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, '收到'); });
         this.handleSticker = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, '收到'); });
-        this.handleFollow = (event) => __awaiter(this, void 0, void 0, function* () {
-            return this.lineClient.replyMessage(event.replyToken, {
-                type: 'flex',
-                altText: '嗨！我是OOber疫',
-                contents: {
-                    type: 'bubble',
-                    direction: 'ltr',
-                    body: {
-                        type: 'box',
-                        layout: 'vertical',
-                        contents: [
-                            {
-                                type: 'text',
-                                text: '嗨！我是OOber疫，如果你想知道關於武漢疫情的資訊，請輸入：',
-                                align: 'start',
-                                gravity: 'center',
-                                weight: 'regular',
-                                color: '#535353',
-                                wrap: true,
-                            },
-                            {
-                                type: 'text',
-                                text: '「武漢」、「肺炎」、「疾病」、「新冠肺炎快訊」等字詞',
-                                margin: 'lg',
-                                weight: 'bold',
-                                color: '#FF5D5D',
-                                wrap: true,
-                            },
-                            {
-                                type: 'text',
-                                text: '若最近剛好要出國玩，想了解各國警示等級，請輸入：',
-                                margin: 'lg',
-                                wrap: true,
-                            },
-                            {
-                                type: 'text',
-                                text: '「出國」、「旅遊」、「警示等級」、「了解各國疫情」等字詞',
-                                margin: 'lg',
-                                weight: 'bold',
-                                color: '#FF5D5D',
-                                wrap: true,
-                            },
-                        ],
-                    },
-                },
-            });
-        });
+        this.handleFollow = (event) => __awaiter(this, void 0, void 0, function* () { return this.lineClient.replyMessage(event.replyToken, welcome_1.welcome); });
         this.handleUnfollow = (event) => __awaiter(this, void 0, void 0, function* () {
             console.log(`被封鎖： ${JSON.stringify(event)}`);
         });
-        this.handleJoin = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, `Joined ${event.source.type}`); });
+        this.handleJoin = (event) => __awaiter(this, void 0, void 0, function* () { return this.lineClient.replyMessage(event.replyToken, welcome_1.welcome); });
         this.handleLeave = (event) => __awaiter(this, void 0, void 0, function* () {
             console.log(`Left ${event.source.type}`);
             return null;

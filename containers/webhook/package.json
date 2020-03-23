@@ -1,7 +1,7 @@
 {
     "name": "aiii-open-bot",
-    "version": "1.0.0",
-    "description": "api 集成",
+    "version": "1.0.1",
+    "description": "Aiii 開源 LINE OOber疫 Chatbot",
     "scripts": {
         "start": "./node_modules/.bin/eslint --ext ts . --fix && tsc && node lib/index.js",
         "lint": "./node_modules/.bin/eslint --ext ts . --fix",
@@ -9,9 +9,13 @@
         "submit": "tsc && gcloud builds submit --tag gcr.io/aiii-open-bot/line-webhook",
         "deploy": "npm update && ./node_modules/.bin/eslint --ext ts . --fix && tsc && gcloud builds submit --tag gcr.io/aiii-open-bot/line-webhook && gcloud beta run deploy line-webhook  --image gcr.io/aiii-open-bot/line-webhook --region asia-east1 --platform managed"
     },
-    "author": "",
+    "author": "Aiii-Developers",
     "license": "Apache-2.0",
     "main": "lib/index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Aiii-Developers/aiii-open-bot"
+    },
     "dependencies": {
         "@allen0304/line-dialogflow": "1.0.9",
         "@line/bot-sdk": "6.8.4",
@@ -31,8 +35,8 @@
         "@types/graphql": "14.5.0",
         "@types/lodash": "^4.14.149",
         "@types/moment-timezone": "^0.5.12",
-        "@types/node": "^13.9.2",
-        "@types/request-promise": "^4.1.45",
+        "@types/node": "^13.9.3",
+        "@types/request-promise": "^4.1.46",
         "@typescript-eslint/eslint-plugin": "^2.24.0",
         "@typescript-eslint/parser": "^2.24.0",
         "@typescript-eslint/typescript-estree": "2.11.0",
@@ -40,7 +44,7 @@
         "eslint-config-airbnb-base": "^14.1.0",
         "eslint-config-airbnb-typescript": "^6.3.1",
         "eslint-config-alloy": "^3.6.0",
-        "eslint-config-prettier": "^6.7.0",
+        "eslint-config-prettier": "^6.10.1",
         "eslint-plugin-import": "2.19.1",
         "eslint-plugin-jsx-a11y": "^6.2.3",
         "eslint-plugin-react": "^7.19.0",

@@ -10,7 +10,7 @@ import { keyboardMap } from './data/keywordMap';
 import { taiwanTodayPayload } from './template/taiwanTodayPayload';
 import { travelWarningInfo } from './template/travelWarningInfo';
 import { travelWarningPayload } from './template/travelWarningPayload';
-import { travelWarningNone } from './template/travelWarningNone';
+// import { travelWarningNone } from './template/travelWarningNone';
 
 const app = express();
 app.use(cors({ origin: true }));
@@ -20,7 +20,6 @@ app.use(bodyParser.urlencoded({
 }));
 const router = express.Router();
 app.use('/', router); // https://api-dnz3lqp74q-an.a.run.app/**
-app.use('/api', router); // https://s.aiii.ai/api/**
 router.get('/', coldStart); // 喚醒
 
 let travelWarning: any;
@@ -69,11 +68,12 @@ router.all('/webhook', (req: express.Request, res: express.Response) => {
 
     lineWebhook.setHandleText(/出國|旅遊|警示等級|了解各國疫情/, async (event) => {
         const { replyToken } = event;
-        lineWebhook.lineClient.replyMessage(replyToken, travelWarningInfo);
+        if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
+            lineWebhook.lineClient.replyMessage(replyToken, travelWarningInfo);
+        }
     });
 
     lineWebhook.setHandleText(/台灣|臺灣|taiwan|武漢|肺炎|疾病|新冠肺炎快訊/i, async (event) => {
-        // const message = event.message as TextEventMessage;
         const { replyToken } = event;
         if (!coronavirusCaseNum) {
             await initCoronavirusCaseNum();
@@ -81,25 +81,27 @@ router.all('/webhook', (req: express.Request, res: express.Response) => {
         if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
             lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload(
                 '台灣',
+                coronavirusCaseNum.taiwan['New cases'],
                 coronavirusCaseNum.taiwan['Confirmed cases'],
                 coronavirusCaseNum.taiwan.Deaths,
+                coronavirusCaseNum['Last updated'],
             ));
         }
     });
 
 
-    lineWebhook.setHandleText(/閉嘴|吵死了/, async (event) => {
+    lineWebhook.setHandleText(/閉嘴|吵死了|安靜|噓/, async (event) => {
         const { replyToken } = event;
         if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
             disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] = false;
-            lineWebhook.replyText(replyToken, ['好的，噓~~~', '需要我時請說', 'oober疫大神歸位!!']);
+            lineWebhook.replyText(replyToken, ['好的，噓~~~', '需要我時請說', 'oober']);
         }
     });
 
-    lineWebhook.setHandleText(/oober疫大神/, async (event) => {
+    lineWebhook.setHandleText(/oober/, async (event) => {
         const { replyToken } = event;
         disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] = true;
-        lineWebhook.replyText(replyToken, '我離開了，我又回來了，咬我啊笨蛋');
+        lineWebhook.replyText(replyToken, '我回來了');
     });
 
     lineWebhook.setHandleText(/^#/, async (event) => {
@@ -124,7 +126,9 @@ router.all('/webhook', (req: express.Request, res: express.Response) => {
                 );
                 lineWebhook.lineClient.replyMessage(replyToken, payloadMessage);
             } else {
-                lineWebhook.lineClient.replyMessage(replyToken, travelWarningNone(text));
+                // lineWebhook.lineClient.replyMessage(replyToken, travelWarningNone(text));
+                text = '全球'; // 目前全球皆為三級
+                lineWebhook.lineClient.replyMessage(replyToken, travelWarningPayload(text, travelWarning[text].severity_level, travelWarning[text].instruction));
             }
         }
     });
@@ -142,15 +146,11 @@ router.all('/webhook', (req: express.Request, res: express.Response) => {
             if (!!key && coronavirusCaseNum[key]) {
                 lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload(
                     key,
+                    coronavirusCaseNum[key]['New cases'],
                     coronavirusCaseNum[key]['Confirmed cases'],
                     coronavirusCaseNum[key].Deaths,
+                    coronavirusCaseNum['Last updated'],
                 ));
-            } else {
-                // lineWebhook.lineClient.replyMessage(replyToken, taiwanTodayPayload(
-                //     '台灣',
-                //     coronavirusCaseNum.taiwan['Confirmed cases'],
-                //     coronavirusCaseNum.taiwan.Deaths,
-                // ));
             }
         }
     });
