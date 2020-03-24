@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({
     extended: true,
 }));
 const router = express.Router();
-app.use('/', router); // https://api-dnz3lqp74q-an.a.run.app/**
+app.use('/', router);
 router.get('/', coldStart); // 喚醒
 
 let travelWarning: any;
@@ -30,6 +30,11 @@ const disableMap: {
     [roomId: string]: boolean;
 } = {};
 
+router.get('/reset', (req: express.Request, res: express.Response) => {
+    travelWarning = null;
+    coronavirusCaseNum = null;
+    res.send('Reset cache');
+});
 
 async function initTravelWarning() {
     travelWarning = await requestPromise.get('https://us-central1-aiii-bot-platform.cloudfunctions.net/travelWarning', {

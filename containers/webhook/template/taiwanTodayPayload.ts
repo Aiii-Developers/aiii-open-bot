@@ -35,7 +35,7 @@ export const taiwanTodayPayload = (
             contents: [
                 {
                     type: 'text',
-                    text: `今日 ${country} 的疫情`,
+                    text: `最新 ${country} 的疫情`,
                     size: 'xl',
                     align: 'center',
                     weight: 'bold',

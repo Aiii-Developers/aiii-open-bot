@@ -38,12 +38,17 @@ app.use(body_parser_1.default.urlencoded({
     extended: true,
 }));
 const router = express_1.default.Router();
-app.use('/', router); // https://api-dnz3lqp74q-an.a.run.app/**
+app.use('/', router);
 router.get('/', cold_start_1.default); // 喚醒
 let travelWarning;
 let coronavirusCaseNum;
 let lineWebhook;
 const disableMap = {};
+router.get('/reset', (req, res) => {
+    travelWarning = null;
+    coronavirusCaseNum = null;
+    res.send('Reset cache');
+});
 function initTravelWarning() {
     return __awaiter(this, void 0, void 0, function* () {
         travelWarning = yield requestPromise.get('https://us-central1-aiii-bot-platform.cloudfunctions.net/travelWarning', {
