@@ -81,12 +81,12 @@ class LineWebhook {
             }
             return this.replyText(event.replyToken, '收到');
         });
-        this.handleImage = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, '收到'); });
-        this.handleVideo = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, '收到'); });
-        this.handleAudio = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, '收到'); });
-        this.handleFile = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, '收到'); });
-        this.handleLocation = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, '收到'); });
-        this.handleSticker = (event) => __awaiter(this, void 0, void 0, function* () { return this.replyText(event.replyToken, '收到'); });
+        this.handleImage = (event) => __awaiter(this, void 0, void 0, function* () { return null; });
+        this.handleVideo = (event) => __awaiter(this, void 0, void 0, function* () { return null; });
+        this.handleAudio = (event) => __awaiter(this, void 0, void 0, function* () { return null; });
+        this.handleFile = (event) => __awaiter(this, void 0, void 0, function* () { return null; });
+        this.handleLocation = (event) => __awaiter(this, void 0, void 0, function* () { return null; });
+        this.handleSticker = (event) => __awaiter(this, void 0, void 0, function* () { return null; });
         this.handleFollow = (event) => __awaiter(this, void 0, void 0, function* () { return this.lineClient.replyMessage(event.replyToken, welcome_1.welcome); });
         this.handleUnfollow = (event) => __awaiter(this, void 0, void 0, function* () {
             console.log(`被封鎖： ${JSON.stringify(event)}`);

@@ -6,7 +6,7 @@ import { TextEventMessage } from '@line/bot-sdk';
 import _ from 'lodash';
 import coldStart from './functions/cold-start';
 import LineWebhook from './methods/webhook/line-webhook.class';
-import { keyboardMap } from './data/keywordMap';
+// import { keyboardMap } from './data/keywordMap';
 import { taiwanTodayPayload } from './template/taiwanTodayPayload';
 import { travelWarningInfo } from './template/travelWarningInfo';
 import { travelWarningPayload } from './template/travelWarningPayload';
@@ -119,11 +119,11 @@ router.all('/webhook', (req: express.Request, res: express.Response) => {
 
         if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
             const payloadMessage: any = [];
-            _.forEach(keyboardMap, (regExp, key) => {
-                if (regExp.test(text)) {
-                    text = key;
-                }
-            });
+            // _.forEach(keyboardMap, (regExp, key) => {
+            //     if (regExp.test(text)) {
+            //         text = key;
+            //     }
+            // });
 
             if (travelWarning[text]) {
                 payloadMessage.push(

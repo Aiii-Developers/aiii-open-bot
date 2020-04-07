@@ -154,17 +154,17 @@ export default class LineWebhook {
     return this.replyText(event.replyToken, '收到');
   };
 
-  protected handleImage = async (event: MessageEvent): Promise<any> => this.replyText(event.replyToken, '收到');
+  protected handleImage = async (event: MessageEvent): Promise<any> => null;
 
-  protected handleVideo = async (event: MessageEvent): Promise<any> => this.replyText(event.replyToken, '收到');
+  protected handleVideo = async (event: MessageEvent): Promise<any> => null;
 
-  protected handleAudio = async (event: MessageEvent): Promise<any> => this.replyText(event.replyToken, '收到');
+  protected handleAudio = async (event: MessageEvent): Promise<any> => null;
 
-  protected handleFile = async (event: MessageEvent): Promise<any> => this.replyText(event.replyToken, '收到');
+  protected handleFile = async (event: MessageEvent): Promise<any> => null;
 
-  protected handleLocation = async (event: MessageEvent): Promise<any> => this.replyText(event.replyToken, '收到');
+  protected handleLocation = async (event: MessageEvent): Promise<any> => null;
 
-  protected handleSticker = async (event: MessageEvent): Promise<any> => this.replyText(event.replyToken, '收到');
+  protected handleSticker = async (event: MessageEvent): Promise<any> => null;
 
   protected handleFollow = async (event: FollowEvent) => this.lineClient.replyMessage(event.replyToken, welcome);
 

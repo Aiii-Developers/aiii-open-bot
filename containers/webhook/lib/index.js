@@ -23,10 +23,9 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const requestPromise = __importStar(require("request-promise"));
-const lodash_1 = __importDefault(require("lodash"));
 const cold_start_1 = __importDefault(require("./functions/cold-start"));
 const line_webhook_class_1 = __importDefault(require("./methods/webhook/line-webhook.class"));
-const keywordMap_1 = require("./data/keywordMap");
+// import { keyboardMap } from './data/keywordMap';
 const taiwanTodayPayload_1 = require("./template/taiwanTodayPayload");
 const travelWarningInfo_1 = require("./template/travelWarningInfo");
 const travelWarningPayload_1 = require("./template/travelWarningPayload");
@@ -117,11 +116,11 @@ router.all('/webhook', (req, res) => {
         }
         if (disableMap[lineWebhook.roomId || lineWebhook.groupId || lineWebhook.userId] !== false) {
             const payloadMessage = [];
-            lodash_1.default.forEach(keywordMap_1.keyboardMap, (regExp, key) => {
-                if (regExp.test(text)) {
-                    text = key;
-                }
-            });
+            // _.forEach(keyboardMap, (regExp, key) => {
+            //     if (regExp.test(text)) {
+            //         text = key;
+            //     }
+            // });
             if (travelWarning[text]) {
                 payloadMessage.push(travelWarningPayload_1.travelWarningPayload(text, travelWarning[text].severity_level, travelWarning[text].instruction));
                 lineWebhook.lineClient.replyMessage(replyToken, payloadMessage);
